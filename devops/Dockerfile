@@ -21,14 +21,62 @@ RUN mv /etc/apt/sources.list /etc/apt/sources.list.bak && \
          apt-get clean && mv /var/lib/apt/lists /tmp && mkdir -p /var/lib/apt/lists/partial && apt-get clean && \
          apt-get update && \
          DEBIAN_FRONTEND=noninteractive apt-get install -y build-essential cmake vim wget \
-          git  \
+          git ca-certificates netbase gnupg dirmngr mercurial openssh-client subversion procps  \
           curl  \
           libjpeg-dev  \
           libpng-dev  \
           libbluetooth-dev  \
           tk-dev \
-          uuid-dev && \
-         apt-get clean && \
+          uuid-dev \
+          autoconf \
+         automake \
+         bzip2 \
+         dpkg-dev \
+         file \
+         g++ \
+         gcc \
+         imagemagick \
+         libbz2-dev \
+         libc6-dev \
+         libcurl4-openssl-dev \
+         libdb-dev \
+         libevent-dev \
+         libffi-dev \
+         libgdbm-dev \
+         libglib2.0-dev \
+         libgmp-dev \
+         libkrb5-dev \
+         liblzma-dev \
+         libmagickcore-dev \
+         libmagickwand-dev \
+         libmaxminddb-dev \
+         libncurses5-dev \
+         libncursesw5-dev \
+         libpng-dev \
+         libpq-dev \
+         libreadline-dev \
+         libsqlite3-dev \
+         libssl-dev \
+         libtool \
+         libwebp-dev \
+         libxml2-dev \
+         libxslt-dev \
+         libyaml-dev \
+         make \
+         patch \
+         unzip \
+         xz-utils \
+         zlib1g-dev \
+         \
+         $( \
+         	if apt-cache show 'default-libmysqlclient-dev' 2>/dev/null | grep -q '^Version:'; then \
+         \
+         echo 'default-libmysqlclient-dev'; \
+         	else \
+         \
+         echo 'libmysqlclient-dev'; \
+         	fi \
+         ) &&  apt-get clean && \
          rm -rf /var/lib/apt/lists/*
 
 ENV GPG_KEY 0D96DF4D4110E5C43FBFB17F2D347EA6AA65421D
@@ -144,10 +192,9 @@ RUN set -ex; \
 WORKDIR /home/catt
 
 RUN pip install -i https://mirrors.aliyun.com/pypi/simple/ numpy pandas scipy scikit-learn tqdm xlrd xlwt jieba py_eureka_client wheel && \
-         pip install -i https://mirrors.aliyun.com/pypi/simple/ certifi==2020.4.5.1 mkl-fft==1.0.15 mkl-random==1.1.0 && \
+         pip install -i https://mirrors.aliyun.com/pypi/simple/ certifi==2020.4.5.1 && \
          pip install torch===1.5.0 torchvision===0.6.0 -f https://download.pytorch.org/whl/torch_stable.html && \
          rm -rf /home/catt/* && \
          pip install -i https://mirrors.aliyun.com/pypi/simple/ grpcio grpcio-tools protobuf && \
          rm -rf ~/.cache/pip
-
 
