@@ -8,75 +8,27 @@ ENV LANG C.UTF-8
 
 # extra dependencies (over what buildpack-deps already includes)
 RUN mv /etc/apt/sources.list /etc/apt/sources.list.bak && \
-         echo "deb https://mirrors.aliyun.com/ubuntu/ bionic main restricted universe multiverse" > /etc/apt/sources.list && \
-         echo "deb https://mirrors.aliyun.com/ubuntu/ bionic-security main restricted universe multiverse" >> /etc/apt/sources.list && \
-         echo "deb-src https://mirrors.aliyun.com/ubuntu/ bionic main restricted universe multiverse" >> /etc/apt/sources.list && \
-         echo "deb https://mirrors.aliyun.com/ubuntu/ bionic-updates main restricted universe multiverse" >> /etc/apt/sources.list && \
-         echo "deb-src https://mirrors.aliyun.com/ubuntu/ bionic-security main restricted universe multiverse" >> /etc/apt/sources.list && \
-         echo "deb https://mirrors.aliyun.com/ubuntu/ bionic-proposed main restricted universe multiverse" >> /etc/apt/sources.list && \
-         echo "deb-src https://mirrors.aliyun.com/ubuntu/ bionic-updates main restricted universe multiverse" >> /etc/apt/sources.list && \
-         echo "deb https://mirrors.aliyun.com/ubuntu/ bionic-backports main restricted universe multiverse" >> /etc/apt/sources.list && \
-         echo "deb-src https://mirrors.aliyun.com/ubuntu/ bionic-proposed main restricted universe multiverse" >> /etc/apt/sources.list && \
-         echo "deb-src https://mirrors.aliyun.com/ubuntu/ bionic-backports main restricted universe multiverse" >> /etc/apt/sources.list && \
-         apt-get clean && mv /var/lib/apt/lists /tmp && mkdir -p /var/lib/apt/lists/partial && apt-get clean && \
+         echo "deb http://mirrors.aliyun.com/ubuntu/ bionic main restricted universe multiverse" > /etc/apt/sources.list && \
+         echo "deb-src http://mirrors.aliyun.com/ubuntu/ bionic main restricted universe multiverse" >> /etc/apt/sources.list && \
+         echo "deb http://mirrors.aliyun.com/ubuntu/ bionic-updates main restricted universe multiverse" >> /etc/apt/sources.list && \
+         echo "deb-src http://mirrors.aliyun.com/ubuntu/ bionic-security main restricted universe multiverse" >> /etc/apt/sources.list && \
+         echo "deb http://mirrors.aliyun.com/ubuntu/ bionic-proposed main restricted universe multiverse" >> /etc/apt/sources.list && \
+         echo "deb-src http://mirrors.aliyun.com/ubuntu/ bionic-updates main restricted universe multiverse" >> /etc/apt/sources.list && \
+         echo "deb http://mirrors.aliyun.com/ubuntu/ bionic-backports main restricted universe multiverse" >> /etc/apt/sources.list && \
+         echo "deb-src http://mirrors.aliyun.com/ubuntu/ bionic-proposed main restricted universe multiverse" >> /etc/apt/sources.list && \
+         echo "deb-src http://mirrors.aliyun.com/ubuntu/ bionic-backports main restricted universe multiverse" >> /etc/apt/sources.list && \
          apt-get update && \
-         DEBIAN_FRONTEND=noninteractive apt-get install -y build-essential cmake vim wget \
-          git ca-certificates netbase gnupg dirmngr mercurial openssh-client subversion procps  \
-          curl  \
-          libjpeg-dev  \
-          libpng-dev  \
-          libbluetooth-dev  \
-          tk-dev \
-          uuid-dev \
-          autoconf \
-         automake \
-         bzip2 \
-         dpkg-dev \
-         file \
-         g++ \
-         gcc \
-         imagemagick \
-         libbz2-dev \
-         libc6-dev \
-         libcurl4-openssl-dev \
-         libdb-dev \
-         libevent-dev \
-         libffi-dev \
-         libgdbm-dev \
-         libglib2.0-dev \
-         libgmp-dev \
-         libkrb5-dev \
-         liblzma-dev \
-         libmagickcore-dev \
-         libmagickwand-dev \
-         libmaxminddb-dev \
-         libncurses5-dev \
-         libncursesw5-dev \
-         libpng-dev \
-         libpq-dev \
-         libreadline-dev \
-         libsqlite3-dev \
-         libssl-dev \
-         libtool \
-         libwebp-dev \
-         libxml2-dev \
-         libxslt-dev \
-         libyaml-dev \
-         make \
-         patch \
-         unzip \
-         xz-utils \
-         zlib1g-dev \
-         \
-         $( \
-         	if apt-cache show 'default-libmysqlclient-dev' 2>/dev/null | grep -q '^Version:'; then \
-         \
-         echo 'default-libmysqlclient-dev'; \
-         	else \
-         \
-         echo 'libmysqlclient-dev'; \
-         	fi \
-         ) &&  apt-get clean && \
+         apt-get install -y build-essential && \
+         apt-get install -y cmake && \
+         apt-get install -y vim && \
+         apt-get install -y git && \
+         apt-get install -y curl && \
+         apt-get install -y libjpeg-dev && \
+         apt-get install -y libpng-dev && \
+         apt-get install -y libbluetooth-dev && \
+         apt-get install -y tk-dev && \
+         apt-get install -y uuid-dev && \
+         apt-get clean && \
          rm -rf /var/lib/apt/lists/*
 
 ENV GPG_KEY 0D96DF4D4110E5C43FBFB17F2D347EA6AA65421D
@@ -85,12 +37,6 @@ ENV PYTHON_VERSION 3.7.7
 RUN set -ex \
 	\
 	&& wget -O python.tar.xz "https://www.python.org/ftp/python/${PYTHON_VERSION%%[a-z]*}/Python-$PYTHON_VERSION.tar.xz" \
-	&& wget -O python.tar.xz.asc "https://www.python.org/ftp/python/${PYTHON_VERSION%%[a-z]*}/Python-$PYTHON_VERSION.tar.xz.asc" \
-	&& export GNUPGHOME="$(mktemp -d)" \
-	&& gpg --batch --keyserver ha.pool.sks-keyservers.net --recv-keys "$GPG_KEY" \
-	&& gpg --batch --verify python.tar.xz.asc python.tar.xz \
-	&& { command -v gpgconf > /dev/null && gpgconf --kill all || :; } \
-	&& rm -rf "$GNUPGHOME" python.tar.xz.asc \
 	&& mkdir -p /usr/src/python \
 	&& tar -xJC /usr/src/python --strip-components=1 -f python.tar.xz \
 	&& rm python.tar.xz \
@@ -172,8 +118,6 @@ ENV PYTHON_GET_PIP_SHA256 b3153ec0cf7b7bbf9556932aa37e4981c35dc2a2c501d70d91d279
 RUN set -ex; \
 	\
 	wget -O get-pip.py "$PYTHON_GET_PIP_URL"; \
-	echo "$PYTHON_GET_PIP_SHA256 *get-pip.py" | sha256sum --check --strict -; \
-	\
 	python get-pip.py \
 		--disable-pip-version-check \
 		--no-cache-dir \
@@ -192,9 +136,8 @@ RUN set -ex; \
 WORKDIR /home/catt
 
 RUN pip install -i https://mirrors.aliyun.com/pypi/simple/ numpy pandas scipy scikit-learn tqdm xlrd xlwt jieba py_eureka_client wheel && \
-         pip install -i https://mirrors.aliyun.com/pypi/simple/ certifi==2020.4.5.1 && \
+         pip install -i https://mirrors.aliyun.com/pypi/simple/ certifi==2020.4.5.1 mkl-fft==1.0.15 mkl-random==1.1.0 && \
          pip install torch===1.5.0 torchvision===0.6.0 -f https://download.pytorch.org/whl/torch_stable.html && \
          rm -rf /home/catt/* && \
          pip install -i https://mirrors.aliyun.com/pypi/simple/ grpcio grpcio-tools protobuf && \
          rm -rf ~/.cache/pip
-
